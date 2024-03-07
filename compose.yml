@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  musify-spring:
+    container_name: musify-spring
+    image: musify-spring
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db:5432/musify
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=reze
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  db:
+    container_name: db
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=reze
+      - POSTGRES_DB=musify
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready', '-p 5432', 'U- postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  musify-react:
+    container_name: musify-react
+    image: musify-react
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'

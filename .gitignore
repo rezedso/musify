@@ -1,0 +1,18 @@
+# Ignore node_modules directory for the frontend
+frontend/node_modules
+
+# Ignore build and target directories for the frontend and backend respectively
+frontend/build
+backend/target
+
+# Ignore IDE files
+.idea
+.vscode
+
+# Ignore compiled Java classes
+*.class
+
+# Ignore application properties that may contain sensitive information
+backend/src/main/resources/**
+# Ignore logs
+*.log

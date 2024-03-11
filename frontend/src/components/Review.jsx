@@ -33,8 +33,6 @@ const Review = ({ review }) => {
     setExpanded((prevState) => !prevState);
   };
 
-  console.log(user?.id);
-  console.log(review?.userId);
   return (
     <Stack sx={{ p: 2, mb: 2 }} component={Paper}>
       <Stack direction='row' sx={{ alignItems: 'center' }}>

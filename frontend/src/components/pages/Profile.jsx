@@ -59,7 +59,7 @@ const ProfilePage = () => {
     isLoading: isLoadingReviews,
     fetchNextPage: fetchNextPageReviews,
     hasNextPage: hasNextPageReviews,
-  } = useGetUserReviews();
+  } = useGetUserReviews(params?.username);
 
   const ratingsData = calculateRatingsData(ratings);
   const totalReviews = reviews?.pages?.map((el) => el.totalElements);
@@ -146,7 +146,7 @@ const ProfilePage = () => {
                           <NoResults text='There are no rated albums yet.' />
                           {currentUser?.username === params?.username && (
                             <Link
-                              to='/artists'
+                              to='/albums'
                               component={RouterLink}
                               sx={{
                                 color: 'primary.main',

@@ -1,11 +1,9 @@
 package com.example.musify.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -23,23 +21,24 @@ public class Review {
     @Id
     @GeneratedValue
     private UUID id;
-
+    @Column(nullable = false)
     private String title;
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+    @Column(nullable = false)
     private Double rating;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "album_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Album album;
 
-    @CreationTimestamp
+    @CreationTimestamp(source = SourceType.DB)
     @Column(updatable = false)
     private Instant createdAt;
     @UpdateTimestamp

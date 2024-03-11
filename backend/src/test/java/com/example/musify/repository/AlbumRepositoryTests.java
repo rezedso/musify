@@ -48,8 +48,18 @@ public class AlbumRepositoryTests {
                 .build();
         genreRepository.save(genre1);
 
+        artist = Artist.builder()
+                .createdAt(Instant.now())
+                .formedYear(Year.of(1999))
+                .artistGenres(Set.of(genre1))
+                .name("Artist")
+                .slug("artist")
+                .build();
+        artistRepository.save(artist);
+
         album1 = Album.builder()
                 .title("Test 1")
+                .artist(artist)
                 .albumGenres(Set.of(genre1))
                 .slug("test-1")
                 .originCountry("country")
@@ -63,26 +73,28 @@ public class AlbumRepositoryTests {
                 .slug("test-2")
                 .originCountry("country")
                 .createdAt(Instant.now())
+                .artist(artist)
                 .rating(4.0)
                 .build();
         albumRepository.saveAll(List.of(album1, album2));
+    }
 
-        artist = Artist.builder()
+    @Test
+    void testSaveAlbum() {
+        Artist artist1 = Artist.builder()
                 .createdAt(Instant.now())
                 .formedYear(Year.of(1999))
                 .artistGenres(Set.of(genre1))
                 .name("Artist")
                 .slug("artist")
                 .build();
-        artistRepository.save(artist);
-    }
+        artistRepository.save(artist1);
 
-    @Test
-    void testSaveAlbum() {
         Instant beforeSave = Instant.now();
 
         Album newAlbum = Album.builder()
                 .title("Test New")
+                .artist(artist1)
                 .albumGenres(Set.of(genre1))
                 .slug("test-new")
                 .originCountry("country")
@@ -102,7 +114,6 @@ public class AlbumRepositoryTests {
         assertThat(retrievedAlbum.getRating()).isEqualTo(5.0);
         assertThat(retrievedAlbum.getAlbumGenres()).contains(genre1);
         assertThat(retrievedAlbum.getCreatedAt()).isBetween(beforeSave, Instant.now());
-        assertThat(albumRepository.count()).isGreaterThan(0);
     }
 
     @Test
@@ -146,7 +157,7 @@ public class AlbumRepositoryTests {
 
     @Test
     void testFindMostRecentAlbums() {
-        Pageable pageable = PageRequest.of(0, 4);
+        Pageable pageable = PageRequest.of(0, 20);
 
         List<Album> recentAlbums = albumRepository.findMostRecentAlbums(pageable);
 
@@ -165,7 +176,7 @@ public class AlbumRepositoryTests {
 
     @Test
     void testFindByGenreSlug() {
-        Pageable pageable = PageRequest.of(0, 2);
+        Pageable pageable = PageRequest.of(0, 20);
 
         Page<Album> albumsPage = albumRepository.findByGenreSlug(genre1.getSlug(), pageable);
 

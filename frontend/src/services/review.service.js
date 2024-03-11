@@ -1,12 +1,12 @@
 import api from './api';
 
-export const getUserReviews = async (page = 1) => {
-  const { data } = await api.get(`/reviews/page/${page}`);
+export const getUserReviews = async (username, page = 1) => {
+  const { data } = await api.get(`/reviews/users/${username}/page/${page}`);
   return data;
 };
 
-export const getRecentReviews = async () => {
-  const { data } = await api.get(`/reviews/recent`);
+export const getReviews = async (page = 1) => {
+  const { data } = await api.get(`/reviews/page/${page}`);
   return data;
 };
 
@@ -21,6 +21,7 @@ export const existsReview = async (albumId) => {
 };
 
 export const createReview = async ({ albumId, review }) => {
+  console.log('review:', review);
   const { data } = await api.post(`/reviews/albums/${albumId}`, review);
   return data;
 };

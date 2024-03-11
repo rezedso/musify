@@ -48,8 +48,18 @@ public class AlbumRatingRepositoryTests {
                 .build();
         genreRepository.save(genre1);
 
+        Artist artist = Artist.builder()
+                .createdAt(Instant.now())
+                .formedYear(Year.of(1999))
+                .artistGenres(Set.of(genre1))
+                .name("Artist")
+                .slug("artist")
+                .build();
+        artistRepository.save(artist);
+
         album1 = Album.builder()
                 .title("Test 1")
+                .artist(artist)
                 .albumGenres(Set.of(genre1))
                 .slug("test-1")
                 .originCountry("country")
@@ -59,6 +69,7 @@ public class AlbumRatingRepositoryTests {
 
         Album album2 = Album.builder()
                 .title("Test 2")
+                .artist(artist)
                 .albumGenres(Set.of(genre1))
                 .slug("test-2")
                 .originCountry("country")
@@ -66,15 +77,6 @@ public class AlbumRatingRepositoryTests {
                 .rating(4.0)
                 .build();
         albumRepository.saveAll(List.of(album1, album2));
-
-        Artist artist = Artist.builder()
-                .createdAt(Instant.now())
-                .formedYear(Year.of(1999))
-                .artistGenres(Set.of(genre1))
-                .name("Artist")
-                .slug("artist")
-                .build();
-        artistRepository.save(artist);
 
         user1 = User.builder()
                 .username("testuser")

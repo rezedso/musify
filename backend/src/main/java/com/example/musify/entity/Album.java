@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SourceType;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -26,27 +27,26 @@ public class Album {
     private String title;
     @Column(name = "release_date")
     private Instant releaseDate;
-    @Column(name = "album_image")
+    @Column(name = "image")
     private String image;
-    @Column(name = "album_slug")
+    @Column(name = "slug")
     private String slug;
     @Column(name = "origin_country")
     private String originCountry;
     private Double rating;
-    @CreationTimestamp
+    @CreationTimestamp(source = SourceType.DB)
     @Column(updatable = false)
     private Instant createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id")
+    @ManyToOne
+    @JoinColumn(name = "artist_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Artist artist;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-            })
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+    })
     @JoinTable(name = "album_genres",
             joinColumns = {@JoinColumn(name = "album_id")},
             inverseJoinColumns = {@JoinColumn(name = "genre_id")})

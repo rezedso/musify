@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SourceType;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,13 +23,13 @@ public class AlbumRating {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "album_id")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Album album;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -36,7 +37,7 @@ public class AlbumRating {
 
     private Double rating;
 
-    @CreationTimestamp
+    @CreationTimestamp(source = SourceType.DB)
     @Column(updatable = false)
     private Instant createdAt;
 }

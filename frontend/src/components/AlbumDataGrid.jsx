@@ -162,7 +162,7 @@ const AlbumDataGrid = ({ albums, list }) => {
           <NoResults text='There are no albums in this list yet.' />
           {currentUser?.username === params?.username && (
             <Link
-              to='/artists'
+              to='/albums'
               component={RouterLink}
               sx={{ color: 'primary.main', textAlign: 'center' }}
             >

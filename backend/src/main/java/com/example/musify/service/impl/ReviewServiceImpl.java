@@ -4,6 +4,7 @@ import com.example.musify.auth.dto.response.MessageDto;
 import com.example.musify.dto.request.CreateReviewDto;
 import com.example.musify.dto.request.UpdateReviewDto;
 import com.example.musify.dto.request.UserIdDto;
+import com.example.musify.dto.response.AlbumDto;
 import com.example.musify.dto.response.PageDto;
 import com.example.musify.dto.response.ReviewDto;
 import com.example.musify.entity.Album;
@@ -13,6 +14,7 @@ import com.example.musify.exception.ResourceAlreadyExistsException;
 import com.example.musify.exception.ResourceNotFoundException;
 import com.example.musify.repository.AlbumRepository;
 import com.example.musify.repository.ReviewRepository;
+import com.example.musify.repository.UserRepository;
 import com.example.musify.service.IReviewService;
 import com.example.musify.service.IUtilService;
 import jakarta.transaction.Transactional;
@@ -32,30 +34,38 @@ import java.util.stream.Collectors;
 public class ReviewServiceImpl implements IReviewService {
     private final ReviewRepository reviewRepository;
     private final AlbumRepository albumRepository;
+    private final UserRepository userRepository;
     private final IUtilService utilService;
     private final ModelMapper modelMapper;
 
     @Override
-    public PageDto<ReviewDto> getUserReviews(int page) {
-        User user = utilService.getCurrentUser();
+    public PageDto<ReviewDto> getUserReviews(String username, int page) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Page<Review> pageRequest = reviewRepository.findByUser(user.getId(),
+        Page<Review> pageRequest = reviewRepository.findByUserUsername(user.getUsername(),
                 PageRequest.of(page - 1, 20));
+
         int totalPages = pageRequest.getTotalPages();
         int currentPage = pageRequest.getNumber() + 1;
         Long totalElements = pageRequest.getTotalElements();
-
         List<ReviewDto> content = pageRequest.getContent().stream().map(review ->
                 modelMapper.map(review, ReviewDto.class)).collect(Collectors.toList());
+
         return new PageDto<>(content, totalPages, currentPage, totalElements);
     }
 
     @Override
-    public List<ReviewDto> getMostRecentReviews() {
-        Pageable pageable = PageRequest.of(0, 4);
+    public PageDto<ReviewDto> getReviews(int page) {
+        Page<Review> pageRequest = reviewRepository.findAll(PageRequest.of(page - 1, 20));
 
-        return reviewRepository.findMostRecentReviews(pageable).stream().map(
-                review -> modelMapper.map(review, ReviewDto.class)).toList();
+        int totalPages = pageRequest.getTotalPages();
+        int currentPage = pageRequest.getNumber() + 1;
+        Long totalElements = pageRequest.getTotalElements();
+        List<ReviewDto> content = pageRequest.getContent().stream().
+                map(tutorial -> modelMapper.map(tutorial, ReviewDto.class)).toList();
+
+        return new PageDto<>(content, totalPages, currentPage, totalElements);
     }
 
     @Override

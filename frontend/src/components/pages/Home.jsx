@@ -3,16 +3,20 @@ import {
   useGetMostRecentAlbums,
   useGetMostRecentArtists,
   useGetRecentAlbumRatings,
-  useGetRecentReviews,
+  useGetReviews,
 } from '../../lib/react-query/queries';
 import Loader from '../Loader';
 import RecentItem from '../RecentItem';
-import ReviewCard from '../ReviewCard';
 import RecentArtist from '../RecentArtist';
+import InfiniteScrollReviewCards from '../InfiniteScrollReviewCards';
 
 const HomePage = () => {
-  const { data: recentReviews, isLoading: isLoadingRecentReviews } =
-    useGetRecentReviews();
+  const {
+    data: reviews,
+    isLoading: isLoadingReviews,
+    fetchNextPage: fetchNextPageReviews,
+    hasNextPage: hasNextPageReviews,
+  } = useGetReviews();
   const { data: recentRatings, isLoading: isLoadingRecentRatings } =
     useGetRecentAlbumRatings();
   const { data: recentArtists, isLoading: isLoadingRecentArtists } =
@@ -20,9 +24,11 @@ const HomePage = () => {
   const { data: recentAlbums, isLoading: isLoadingRecentAlbums } =
     useGetMostRecentAlbums();
 
+  const totalPages = reviews?.pages?.flatMap((pages) => pages.totalPages);
+
   return (
     <Container maxWidth='xl' sx={{ mt: 2 }}>
-      {isLoadingRecentReviews ||
+      {isLoadingReviews ||
       isLoadingRecentRatings ||
       isLoadingRecentArtists ||
       isLoadingRecentAlbums ? (
@@ -30,14 +36,16 @@ const HomePage = () => {
       ) : (
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
-            {recentReviews?.length > 0 && (
+            {totalPages > 0 && (
               <>
                 <Typography variant='h5' sx={{ mb: 2 }}>
                   Recent Reviews
                 </Typography>
-                {recentReviews?.map((review) => (
-                  <ReviewCard key={review.id} review={review} />
-                ))}
+                <InfiniteScrollReviewCards
+                  data={reviews}
+                  fetchNextPage={fetchNextPageReviews}
+                  hasNextPage={hasNextPageReviews}
+                />
               </>
             )}
           </Grid>

@@ -78,7 +78,6 @@ const CreateOrUpdateArtistModal = ({ artist }) => {
         image: data.image,
       });
     }
-
     reset();
     handleClose();
   };

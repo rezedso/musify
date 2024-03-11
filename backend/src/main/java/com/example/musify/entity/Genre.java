@@ -21,23 +21,21 @@ public class Genre {
     private UUID id;
     @Column(nullable = false, unique = true)
     private String name;
-    @Column(name = "genre_slug")
+    @Column(name = "slug")
     private String slug;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    },
             mappedBy = "artistGenres")
     @JsonIgnore
     private Set<Artist> artists = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    },
             mappedBy = "albumGenres")
     @JsonIgnore
     private Set<Album> albums = new HashSet<>();

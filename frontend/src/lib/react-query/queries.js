@@ -62,7 +62,7 @@ import {
   deleteReview,
   existsReview,
   getAlbumReviews,
-  getRecentReviews,
+  getReviews,
   getUserReviews,
   updateReview,
 } from '../../services/review.service';
@@ -681,10 +681,10 @@ export const useUnFollowArtist = () => {
 
 /* ***** REVIEWS ***** */
 
-export const useGetUserReviews = () => {
+export const useGetUserReviews = (username) => {
   return useInfiniteQuery({
-    queryKey: ['reviews'],
-    queryFn: ({ pageParam = 1 }) => getUserReviews(pageParam),
+    queryKey: ['user-reviews'],
+    queryFn: ({ pageParam = 1 }) => getUserReviews(username, pageParam),
     getNextPageParam: (lastPage) => {
       const { totalPages, currentPage } = lastPage;
       return currentPage < totalPages ? currentPage + 1 : undefined;
@@ -692,10 +692,14 @@ export const useGetUserReviews = () => {
   });
 };
 
-export const useGetRecentReviews = () => {
-  return useQuery({
-    queryKey: ['recent-reviews'],
-    queryFn: () => getRecentReviews(),
+export const useGetReviews = () => {
+  return useInfiniteQuery({
+    queryKey: ['reviews'],
+    queryFn: ({ pageParam = 1 }) => getReviews(pageParam),
+    getNextPageParam: (lastPage) => {
+      const { totalPages, currentPage } = lastPage;
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
   });
 };
 

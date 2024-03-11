@@ -58,11 +58,11 @@ public class ReviewControllerTests {
 
     @Test
     public void testGetUserReviews_Success() throws Exception {
-        given(reviewService.getUserReviews(anyInt())).willReturn(
+        given(reviewService.getUserReviews(anyString(), anyInt())).willReturn(
                 new PageDto<>(List.of(new ReviewDto()), 1, 1, 1L));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/reviews/page/{page}", 1)
+                .get("/reviews/users/{username}/page/{page}", "username", 1)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -75,11 +75,12 @@ public class ReviewControllerTests {
     }
 
     @Test
-    public void testGetMostRecentReviews() throws Exception {
-        given(reviewService.getMostRecentReviews()).willReturn(List.of(new ReviewDto()));
+    public void testGetReviews() throws Exception {
+        given(reviewService.getReviews(anyInt())).willReturn(
+                new PageDto<>(List.of(new ReviewDto()), 1, 1, 1L));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/reviews/recent")
+                .get("/reviews/page/{page}", 1)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -92,7 +93,7 @@ public class ReviewControllerTests {
                 new PageDto<>(List.of(new ReviewDto()), 1, 1, 1L));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/reviews/albums/{albumId}/page/{page}",UUID.randomUUID(),1)
+                .get("/reviews/albums/{albumId}/page/{page}", UUID.randomUUID(), 1)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -105,7 +106,7 @@ public class ReviewControllerTests {
                 .willThrow(new ResourceNotFoundException("Album not found."));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/reviews/albums/{albumId}/page/{page}",UUID.randomUUID(),1)
+                .get("/reviews/albums/{albumId}/page/{page}", UUID.randomUUID(), 1)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -225,7 +226,7 @@ public class ReviewControllerTests {
                 .id(UUID.randomUUID())
                 .build();
 
-        given(reviewService.deleteReview(reviewId,userIdDto)).willReturn(new MessageDto("Review deleted."));
+        given(reviewService.deleteReview(reviewId, userIdDto)).willReturn(new MessageDto("Review deleted."));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .delete("/reviews/{reviewId}", reviewId)
@@ -245,7 +246,7 @@ public class ReviewControllerTests {
                 .id(UUID.randomUUID())
                 .build();
 
-        given(reviewService.deleteReview(reviewId,userIdDto))
+        given(reviewService.deleteReview(reviewId, userIdDto))
                 .willThrow(new ResourceNotFoundException("Review not found"));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders

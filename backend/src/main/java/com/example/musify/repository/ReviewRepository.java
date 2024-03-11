@@ -4,6 +4,7 @@ import com.example.musify.entity.Album;
 import com.example.musify.entity.Review;
 import com.example.musify.entity.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,7 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     Page<Review> findByAlbum(@Param("album") Album album, Pageable of);
 
     @Query("SELECT r FROM Review r ORDER BY r.createdAt DESC")
-    List<Review> findMostRecentReviews(Pageable pageable);
+    Page<Review> findAll(Pageable pageable);
+
+    Page<Review> findByUserUsername(String username, Pageable p);
 }

@@ -19,12 +19,12 @@ public class Follower {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "artist_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Artist artist;

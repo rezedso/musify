@@ -23,7 +23,7 @@ const ReviewCard = ({ review }) => {
   const handleExpand = () => {
     setExpanded((prevState) => !prevState);
   };
-
+  // console.log(review?.content);
   return (
     <Stack component={Paper} sx={{ mb: 2 }}>
       <Grid container spacing={1}>

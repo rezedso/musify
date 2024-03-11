@@ -3,6 +3,7 @@ package com.example.musify.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
 
 import java.time.Instant;
 import java.time.Year;
@@ -27,15 +28,15 @@ public class Artist {
     private String originCountry;
     @Column(name = "formed_year")
     private Year formedYear;
-    @Column(name = "artist_image")
+    @Column(name = "image")
     private String image;
-    @Column(name = "artist_slug")
+    @Column(name = "slug")
     private String slug;
-    @CreationTimestamp
+    @CreationTimestamp(source = SourceType.DB)
     @Column(updatable = false)
     private Instant createdAt;
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE

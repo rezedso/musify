@@ -42,25 +42,28 @@ public class ReviewController {
                                     subTypes = {ReviewDto.class}))
                     })
     })
-    @GetMapping("/page/{page}")
+    @GetMapping("users/{username}/page/{page}")
     ResponseEntity<PageDto<ReviewDto>> getUserReviews(
+            @PathVariable("username") String username,
             @PathVariable("page") int page
     ) {
-        return ResponseEntity.ok(reviewService.getUserReviews(page));
+        return ResponseEntity.ok(reviewService.getUserReviews(username, page));
     }
 
-    @Operation(summary = "Get most recent reviews.")
+    @Operation(summary = "Get a page with all the reviews.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Retrieved a list containing the most recently created reviews.",
+                    description = "Retrieved a page containing all the reviews.",
                     content = {@Content(
                             mediaType = "application/json",
                             schema = @Schema(type = "array", implementation = ReviewDto.class))
                     })
     })
-    @GetMapping("/recent")
-    ResponseEntity<List<ReviewDto>> getMostRecentReviews() {
-        return ResponseEntity.ok(reviewService.getMostRecentReviews());
+    @GetMapping("/page/{page}")
+    ResponseEntity<PageDto<ReviewDto>> getReviews(
+            @PathVariable("page") int page
+    ) {
+        return ResponseEntity.ok(reviewService.getReviews(page));
     }
 
     @Operation(summary = "Get a page containing all the reviews from an album.")

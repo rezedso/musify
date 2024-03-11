@@ -1,9 +1,6 @@
 package com.example.musify.repository;
 
-import com.example.musify.entity.Album;
-import com.example.musify.entity.Genre;
-import com.example.musify.entity.Review;
-import com.example.musify.entity.User;
+import com.example.musify.entity.*;
 import com.example.musify.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +33,8 @@ public class ReviewRepositoryTests {
     private UserRepository userRepository;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private ArtistRepository artistRepository;
 
     private Album album1;
     private User user1;
@@ -50,8 +50,20 @@ public class ReviewRepositoryTests {
                 .build();
         genreRepository.save(genre1);
 
+        Artist artist = Artist.builder()
+                .name("Artist")
+                .artistGenres(Set.of(genre1))
+                .formedYear(Year.of(1999))
+                .createdAt(Instant.now())
+                .originCountry("Country")
+                .slug("artist")
+                .build();
+
+        artistRepository.save(artist);
+
         album1 = Album.builder()
                 .title("Album 1")
+                .artist(artist)
                 .albumGenres(Set.of(genre1))
                 .slug("album-1")
                 .originCountry("country")
@@ -141,7 +153,7 @@ public class ReviewRepositoryTests {
     @Test
     void testFindByUser() {
         PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("createdAt").descending());
-        Page<Review> reviewsPage = reviewRepository.findByUser(user2.getId(), pageRequest);
+        Page<Review> reviewsPage = reviewRepository.findByUserUsername(user2.getUsername(), pageRequest);
 
         assertThat(reviewsPage).isNotNull();
         assertThat(reviewsPage.getContent().size()).isGreaterThan(0);
@@ -158,12 +170,12 @@ public class ReviewRepositoryTests {
 
     @Test
     void testFindMostRecentReviews() {
-        Pageable pageable = PageRequest.of(0, 4);
+        Pageable pageable = PageRequest.of(0, 20);
 
-        List<Review> recentReviews = reviewRepository.findMostRecentReviews(pageable);
+        Page<Review> recentReviews = reviewRepository.findAll(pageable);
 
         assertThat(recentReviews).isNotNull();
-        assertThat(recentReviews.size()).isGreaterThan(0);
+        assertThat(recentReviews.getContent().size()).isGreaterThan(0);
     }
 
     @Test

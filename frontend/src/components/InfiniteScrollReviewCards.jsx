@@ -7,7 +7,7 @@ import ReviewCard from './ReviewCard';
 const InfiniteScrollReviewCards = ({ data, fetchNextPage, hasNextPage }) => {
   return (
     <InfiniteScroll
-      dataLength={data?.pages?.length || 6}
+      dataLength={data?.pages?.length || 20}
       next={fetchNextPage}
       hasMore={!!hasNextPage}
       loader={

@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -112,11 +113,11 @@ public class ReviewServiceTests {
 
     @Test
     void testGetUserReviews() {
-        given(reviewRepository.findByUser(eq(user1.getId()), any(Pageable.class)))
+        given(userRepository.findByUsername(user1.getUsername())).willReturn(Optional.of(user1));
+        given(reviewRepository.findByUserUsername(eq(user1.getUsername()), any(Pageable.class)))
                 .willReturn(new PageImpl<>(List.of(review1)));
-        given(utilService.getCurrentUser()).willReturn(user1);
 
-        PageDto<ReviewDto> result = reviewService.getUserReviews(1);
+        PageDto<ReviewDto> result = reviewService.getUserReviews(user1.getUsername(), 1);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
@@ -124,19 +125,20 @@ public class ReviewServiceTests {
         assertThat(result.getCurrentPage()).isEqualTo(1);
         assertThat(result.getTotalElements()).isEqualTo(1L);
 
-        verify(reviewRepository, times(1)).findByUser(eq(user1.getId()), any(Pageable.class));
+        verify(reviewRepository, times(1)).findByUserUsername(eq(user1.getUsername()), any(Pageable.class));
     }
 
     @Test
-    void testGetMostRecentReviews() {
-        given(reviewRepository.findMostRecentReviews(any(Pageable.class))).willReturn(List.of(review1));
+    void testGetReviews() {
+        given(reviewRepository.findAll(any(Pageable.class))).willReturn(
+                new PageImpl<>(List.of(review1)));
 
-        List<ReviewDto> result = reviewService.getMostRecentReviews();
+        PageDto<ReviewDto> result = reviewService.getReviews(1);
 
         assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.getContent().size()).isEqualTo(1);
 
-        verify(reviewRepository, times(1)).findMostRecentReviews(any(Pageable.class));
+        verify(reviewRepository, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
